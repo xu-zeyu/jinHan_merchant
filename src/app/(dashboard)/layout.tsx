@@ -9,17 +9,15 @@ export default function DashboardLayout({
   children: ReactNode;
 }>) {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#fff7e8_0%,#fffdf8_38%,#f9fafb_100%)] text-slate-900">
-      <div className="flex min-h-screen">
-        <Sidebar />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <Header />
-          <main className="flex-1 px-4 py-6 md:px-8">
-            <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-              {children}
-            </div>
-          </main>
-        </div>
+    <div className="flex h-screen overflow-hidden bg-background">
+      <Sidebar />
+      <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
+        <Header />
+        <main className="flex-1 px-6 py-6">
+          <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

@@ -4,47 +4,52 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --background: 40 33% 98%;
+    --foreground: 20 14% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 20 14% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
+    --popover-foreground: 20 14% 4%;
     --primary: 38 100% 65%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
+    --primary-foreground: 38 100% 10%;
+    --secondary: 40 20% 96%;
+    --secondary-foreground: 24 10% 10%;
+    --muted: 40 20% 96%;
+    --muted-foreground: 25 5% 45%;
+    --accent: 40 20% 96%;
+    --accent-foreground: 24 10% 10%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
+    --border: 30 15% 90%;
+    --input: 30 15% 90%;
     --ring: 38 100% 65%;
-    --radius: 1rem;
+    --radius: 0.75rem;
+    --chart-1: 38 100% 65%;
+    --chart-2: 43 96% 56%;
+    --chart-3: 48 96% 76%;
+    --chart-4: 142 71% 45%;
+    --chart-5: 200 80% 55%;
   }
 
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --background: 20 14% 4%;
+    --foreground: 40 33% 98%;
+    --card: 20 14% 8%;
+    --card-foreground: 40 33% 98%;
+    --popover: 20 14% 8%;
+    --popover-foreground: 40 33% 98%;
     --primary: 38 100% 65%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --primary-foreground: 38 100% 10%;
+    --secondary: 20 10% 15%;
+    --secondary-foreground: 40 33% 98%;
+    --muted: 20 10% 15%;
+    --muted-foreground: 30 10% 60%;
+    --accent: 20 10% 15%;
+    --accent-foreground: 40 33% 98%;
+    --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
+    --border: 20 10% 20%;
+    --input: 20 10% 20%;
     --ring: 38 100% 65%;
   }
 }
@@ -55,12 +60,19 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
     font-family:
-      "Avenir Next",
+      "Inter",
       "SF Pro Display",
       "PingFang SC",
       "Hiragino Sans GB",
       "Microsoft YaHei",
       sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
 }

@@ -141,6 +141,7 @@ src/
 
     (auth)/
     (dashboard)/
+    ...
 
   features/
 
