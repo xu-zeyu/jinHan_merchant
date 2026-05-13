@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { AuthPageGuard } from "@/features/auth/components/auth-page-guard";
+
 export default function AuthLayout({
   children,
 }: Readonly<{
@@ -30,7 +32,9 @@ export default function AuthLayout({
               </p>
             </div>
           </div>
-          <div className="p-6 md:p-10">{children}</div>
+          <div className="p-6 md:p-10">
+            <AuthPageGuard>{children}</AuthPageGuard>
+          </div>
         </div>
       </div>
     </div>

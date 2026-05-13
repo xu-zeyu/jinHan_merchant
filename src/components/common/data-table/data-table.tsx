@@ -47,11 +47,15 @@ export function DataTable<TData>({
   searchKeys = [],
   searchPlaceholder = "搜索...",
 }: DataTableProps<TData>) {
+  const resolvedDefaultPageSize =
+    pageSizeOptions?.includes(defaultPageSize)
+      ? defaultPageSize
+      : pageSizeOptions?.[0] ?? defaultPageSize;
   const [filtersExpanded, setFiltersExpanded] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState("");
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
-    pageSize: defaultPageSize,
+    pageSize: resolvedDefaultPageSize,
   });
   const [filterValues, setFilterValues] = React.useState<Record<string, string>>(
     () =>
@@ -61,27 +65,31 @@ export function DataTable<TData>({
   );
 
   const normalizedKeyword = searchValue.trim().toLowerCase();
-  const filteredData = data.filter((row) => {
-    const matchesKeyword =
-      normalizedKeyword.length === 0 ||
-      searchKeys.some((key) => {
-        const value = row[key];
+  const filteredData = React.useMemo(
+    () =>
+      data.filter((row) => {
+        const matchesKeyword =
+          normalizedKeyword.length === 0 ||
+          searchKeys.some((key) => {
+            const value = row[key];
 
-        return String(value ?? "").toLowerCase().includes(normalizedKeyword);
-      });
+            return String(value ?? "").toLowerCase().includes(normalizedKeyword);
+          });
 
-    const matchesFilters = filters.every((filter) => {
-      const currentValue = filterValues[filter.id];
+        const matchesFilters = filters.every((filter) => {
+          const currentValue = filterValues[filter.id];
 
-      if (!currentValue || currentValue === "all") {
-        return true;
-      }
+          if (!currentValue || currentValue === "all") {
+            return true;
+          }
 
-      return filter.valueGetter(row) === currentValue;
-    });
+          return filter.valueGetter(row) === currentValue;
+        });
 
-    return matchesKeyword && matchesFilters;
-  });
+        return matchesKeyword && matchesFilters;
+      }),
+    [data, filterValues, filters, normalizedKeyword, searchKeys]
+  );
 
   React.useEffect(() => {
     setPagination((current) =>
@@ -90,6 +98,7 @@ export function DataTable<TData>({
   }, [filterValues, normalizedKeyword]);
 
   const table = useReactTable({
+    autoResetPageIndex: false,
     columns,
     data: filteredData,
     getCoreRowModel: getCoreRowModel(),
@@ -115,7 +124,7 @@ export function DataTable<TData>({
         searchValue={searchValue}
       />
 
-      <div className="overflow-hidden rounded-2xl border border-border/60 bg-background">
+      <div className="overflow-hidden rounded-2xl bg-card shadow-[0_18px_40px_-28px_rgba(15,23,42,0.24)]">
         <div className={cn("overflow-auto", maxHeightClassName)}>
           <table className="w-full min-w-[720px] border-separate border-spacing-0">
             <thead>
@@ -124,7 +133,7 @@ export function DataTable<TData>({
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="sticky top-0 z-10 border-b border-border/60 bg-secondary/85 px-4 py-3 text-left text-xs font-semibold text-muted-foreground backdrop-blur"
+                      className="sticky top-0 z-10 border-b border-border/60 bg-background/88 px-4 py-3 text-left text-xs font-semibold text-muted-foreground backdrop-blur-xl"
                     >
                       {header.isPlaceholder
                         ? null

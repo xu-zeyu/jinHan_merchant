@@ -1,6 +1,26 @@
+"use client";
+
+import type { FormEvent } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+
+import { useAuthStore } from "@/features/auth/store/use-auth-store";
+import { getAuthenticatedRedirectPath } from "@/features/auth/utils/auth-routing";
+import { ROUTES } from "@/constants/routes";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTarget = searchParams.get("redirect");
+  const login = useAuthStore((state) => state.login);
+  const hasHydrated = useAuthStore((state) => state.hasHydrated);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    login();
+    router.replace(getAuthenticatedRedirectPath(redirectTarget));
+  };
+
   return (
     <div className="mx-auto flex w-full max-w-md flex-col justify-center">
       <div>
@@ -13,7 +33,7 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <form className="mt-8 space-y-4">
+      <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
         <label className="block space-y-2">
           <span className="text-sm font-medium text-slate-700">邮箱</span>
           <input
@@ -31,18 +51,19 @@ export default function LoginPage() {
           />
         </label>
         <button
-          className="w-full rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-600"
+          className="w-full rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-600 disabled:cursor-not-allowed disabled:opacity-60"
+          disabled={!hasHydrated}
           type="submit"
         >
-          登录
+          {hasHydrated ? "登录" : "初始化中..."}
         </button>
       </form>
 
       <div className="mt-6 flex items-center justify-between text-sm text-slate-500">
-        <Link className="hover:text-primary-700" href="/forgot-password">
+        <Link className="hover:text-primary-700" href={ROUTES.FORGOT_PASSWORD}>
           忘记密码
         </Link>
-        <Link className="hover:text-primary-700" href="/register">
+        <Link className="hover:text-primary-700" href={ROUTES.REGISTER}>
           注册新账号
         </Link>
       </div>

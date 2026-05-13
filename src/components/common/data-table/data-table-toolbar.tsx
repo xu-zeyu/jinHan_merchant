@@ -47,13 +47,13 @@ export function DataTableToolbar<TData>({
   }).length;
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center">
+    <div className="space-y-2.5">
+      <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-1 flex-col gap-2.5 sm:flex-row sm:items-center">
           <div className="relative w-full sm:max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              className="h-10 rounded-xl pl-9"
+              className="h-9 rounded-xl bg-card pl-9"
               onChange={(event) => onSearchChange(event.target.value)}
               placeholder={searchPlaceholder}
               value={searchValue}
@@ -85,7 +85,7 @@ export function DataTableToolbar<TData>({
       </div>
 
       {filtersExpanded ? (
-        <div className="grid gap-3 rounded-2xl border border-border/60 bg-secondary/50 p-3 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 rounded-2xl bg-background/80 p-3 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.2)] backdrop-blur-xl md:grid-cols-2 xl:grid-cols-4">
           {filters.map((filter) => (
             <div key={filter.id} className="space-y-2">
               <p className="text-xs font-medium text-muted-foreground">{filter.label}</p>
@@ -93,7 +93,7 @@ export function DataTableToolbar<TData>({
                 onValueChange={(value) => onFilterChange(filter.id, value)}
                 value={filterValues[filter.id]}
               >
-                <SelectTrigger className="h-9 rounded-xl bg-background text-xs">
+                <SelectTrigger className="h-9 rounded-xl bg-card text-xs shadow-sm">
                   <SelectValue placeholder={filter.allLabel ?? "全部"} />
                 </SelectTrigger>
                 <SelectContent>
