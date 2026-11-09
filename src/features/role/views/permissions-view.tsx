@@ -51,7 +51,7 @@ export function PermissionsView() {
             同步内置权限码
           </Button>
         }
-        description="权限点目录查询与内置权限码同步（ADMIN-V1-11）"
+        description="查看和同步系统权限目录。"
         title="权限点"
       />
 
@@ -68,6 +68,7 @@ export function PermissionsView() {
         }
       >
         <AsyncState
+          onRetry={() => void refetch()}
           error={error}
           isEmpty={!isLoading && (data?.length ?? 0) === 0}
           isError={isError}
@@ -84,7 +85,7 @@ export function PermissionsView() {
               key={permission.code}
               className="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-muted/40"
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-xs font-semibold text-primary-700">
+              <div className="glass-soft flex h-9 w-9 items-center justify-center rounded-xl text-xs font-semibold text-brand-strong">
                 {permission.name.slice(0, 1)}
               </div>
               <div className="min-w-0 flex-1">

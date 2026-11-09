@@ -23,6 +23,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRoleOptions } from "@/features/role/hooks/use-roles";
+import { useHasPermission } from "@/features/auth/hooks/use-permission";
+import { useAuthStore } from "@/features/auth/store/use-auth-store";
+import { PERMISSION_CODES } from "@/permissions/permission-codes";
 
 import {
   createAccountSchema,
@@ -55,7 +58,10 @@ export function AccountFormDialog({
   onUpdate,
 }: AccountFormDialogProps) {
   const isEdit = account !== null;
-  const { data: roleOptions } = useRoleOptions(open);
+  const currentAccountId = useAuthStore((state) => state.account?.id);
+  const canAssignRole = useHasPermission(PERMISSION_CODES.ACCOUNT_ASSIGN_ROLE);
+  const canEditRole = canAssignRole && (!isEdit || account?.id !== currentAccountId) && !account?.superAdmin;
+  const { data: roleOptions } = useRoleOptions(open && canEditRole);
 
   const form = useForm<CreateAccountFormValues>({
     resolver: zodResolver(isEdit ? updateAccountSchema : createAccountSchema),
@@ -76,6 +82,7 @@ export function AccountFormDialog({
             displayName: account.displayName,
             password: "",
             phone: account.phone ?? "",
+            roleId: account.roleId ?? undefined,
           }
         : { username: "", displayName: "", password: "", phone: "" }
     );
@@ -85,7 +92,9 @@ export function AccountFormDialog({
     const payload = {
       displayName: values.displayName,
       phone: values.phone || undefined,
-      roleId: values.roleId,
+      ...(canEditRole && values.roleId !== undefined && values.roleId !== account?.roleId
+        ? { roleId: values.roleId }
+        : {}),
     };
     if (isEdit) {
       onUpdate(payload);
@@ -96,7 +105,7 @@ export function AccountFormDialog({
       displayName: values.displayName,
       password: values.password,
       phone: values.phone || undefined,
-      roleId: values.roleId,
+      roleId: canEditRole ? values.roleId : undefined,
     });
   });
 
@@ -178,13 +187,8 @@ export function AccountFormDialog({
           <div className="space-y-2">
             <Label>角色</Label>
             <Select
-              value={
-                form.watch("roleId") !== undefined
-                  ? String(form.watch("roleId"))
-                  : isEdit && account?.roleId
-                    ? String(account.roleId)
-                    : NO_ROLE
-              }
+              disabled={!canEditRole}
+              value={form.watch("roleId") !== undefined ? String(form.watch("roleId")) : NO_ROLE}
               onValueChange={(value) =>
                 form.setValue(
                   "roleId",
@@ -196,7 +200,7 @@ export function AccountFormDialog({
                 <SelectValue placeholder="选择角色（可选）" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={NO_ROLE}>不分配角色</SelectItem>
+                <SelectItem value={NO_ROLE}>{isEdit ? "保持当前角色" : "不分配角色"}</SelectItem>
                 {(roleOptions ?? []).map((option) => (
                   <SelectItem key={option.value} value={String(option.value)}>
                     {option.label}
@@ -204,6 +208,9 @@ export function AccountFormDialog({
                 ))}
               </SelectContent>
             </Select>
+            {!canEditRole && isEdit ? (
+              <p className="text-xs text-muted-foreground">当前账号或超级管理员的角色不能在此修改。</p>
+            ) : null}
           </div>
 
           {errorMessage ? (

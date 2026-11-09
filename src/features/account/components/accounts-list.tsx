@@ -1,7 +1,9 @@
 "use client";
 
 import { KeyRound, MoreHorizontal, ShieldCheck, Trash2, UserCog } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
 
+import { DataTable } from "@/components/common/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,8 +13,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PERMISSION_CODES } from "@/permissions/permission-codes";
 import { useHasPermission } from "@/features/auth/hooks/use-permission";
+import { PERMISSION_CODES } from "@/permissions/permission-codes";
 
 import type { AdminAccount } from "../types/account.types";
 
@@ -29,7 +31,6 @@ function formatDate(value: string) {
   return value ? value.replace("T", " ").slice(0, 16) : "-";
 }
 
-/** 管理员账号卡片列表（ADMIN-V1-04） */
 export function AccountsList({
   accounts,
   currentAccountId,
@@ -43,84 +44,70 @@ export function AccountsList({
   const canReset = useHasPermission(PERMISSION_CODES.ACCOUNT_RESET_PASSWORD);
   const canDelete = useHasPermission(PERMISSION_CODES.ACCOUNT_DELETE);
 
-  return (
-    <>
-      {accounts.map((account) => {
-        const isSelf = account.id === currentAccountId;
-        const guardAction = account.superAdmin && !isSelf ? false : true;
-
+  const columns: ColumnDef<AdminAccount>[] = [
+    {
+      id: "account",
+      header: "管理员",
+      cell: ({ row }) => (
+        <div className="flex min-w-48 items-center gap-3">
+          <div className="glass-soft flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-sm font-semibold text-brand-strong">
+            {row.original.displayName.slice(0, 1)}
+          </div>
+          <div className="min-w-0">
+            <p className="truncate font-medium">{row.original.displayName}</p>
+            <p className="truncate text-xs text-muted-foreground">@{row.original.username}</p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "role",
+      header: "角色",
+      cell: ({ row }) => row.original.superAdmin
+        ? <Badge variant="secondary">超级管理员</Badge>
+        : <span className="text-muted-foreground">{row.original.roleId ? `角色 #${row.original.roleId}` : "未分配"}</span>,
+    },
+    {
+      id: "status",
+      header: "状态",
+      cell: ({ row }) => (
+        <Badge variant={row.original.enabled ? "success" : "destructive"}>
+          {row.original.enabled ? "启用" : "停用"}
+        </Badge>
+      ),
+    },
+    {
+      id: "created",
+      header: "创建时间",
+      cell: ({ row }) => <span className="whitespace-nowrap text-muted-foreground">{formatDate(row.original.createdTime)}</span>,
+    },
+    {
+      id: "actions",
+      header: () => <span className="sr-only">操作</span>,
+      cell: ({ row }) => {
+        const account = row.original;
+        const canManageTarget = !account.superAdmin && account.id !== currentAccountId;
         return (
-          <div
-            key={account.id}
-            className="flex flex-wrap items-center gap-4 px-5 py-4 transition-colors hover:bg-muted/40"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-sm font-semibold text-primary-700">
-              {account.displayName.slice(0, 1)}
-            </div>
-
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="truncate text-sm font-semibold">
-                  {account.displayName}
-                </p>
-                <span className="text-xs text-muted-foreground">
-                  @{account.username}
-                </span>
-                {account.superAdmin ? (
-                  <Badge variant="secondary">超级管理员</Badge>
-                ) : null}
-                {account.passwordChangeRequired ? (
-                  <Badge variant="outline">待改密</Badge>
-                ) : null}
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {account.phone ?? "未配置手机号"} · 创建于{" "}
-                {formatDate(account.createdTime)}
-              </p>
-            </div>
-
-            <Badge variant={account.enabled ? "default" : "destructive"}>
-              {account.enabled ? "启用" : "停用"}
-            </Badge>
-
+          <div className="flex justify-end">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button size="icon" variant="ghost">
-                  <MoreHorizontal />
-                </Button>
+                <Button aria-label={`管理 ${account.displayName}`} size="icon" variant="ghost"><MoreHorizontal /></Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  disabled={!canUpdate}
-                  onClick={() => onEdit(account)}
-                >
-                  <UserCog /> 编辑
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  disabled={!canReset}
-                  onClick={() => onResetPassword(account)}
-                >
-                  <KeyRound /> 重置密码
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  disabled={!canStatus || !guardAction}
-                  onClick={() => onToggleStatus(account)}
-                >
+              <DropdownMenuContent align="end" className="glass-surface">
+                <DropdownMenuItem disabled={!canUpdate || !canManageTarget} onClick={() => onEdit(account)}><UserCog /> 编辑</DropdownMenuItem>
+                <DropdownMenuItem disabled={!canReset || !canManageTarget} onClick={() => onResetPassword(account)}><KeyRound /> 重置密码</DropdownMenuItem>
+                <DropdownMenuItem disabled={!canStatus || !canManageTarget} onClick={() => onToggleStatus(account)}>
                   <ShieldCheck /> {account.enabled ? "停用" : "启用"}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="text-destructive focus:text-destructive"
-                  disabled={!canDelete || account.superAdmin || isSelf}
-                  onClick={() => onDelete(account)}
-                >
-                  <Trash2 /> 删除
-                </DropdownMenuItem>
+                <DropdownMenuItem className="text-destructive focus:text-destructive" disabled={!canDelete || !canManageTarget} onClick={() => onDelete(account)}><Trash2 /> 删除</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         );
-      })}
-    </>
-  );
+      },
+    },
+  ];
+
+  return <DataTable columns={columns} data={accounts} label="管理员账号列表" />;
 }

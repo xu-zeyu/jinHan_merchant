@@ -19,6 +19,8 @@ import type { AdminRole } from "../types/role.types";
 type RolePermissionsDialogProps = {
   role: AdminRole | null;
   selected: string[];
+  selectedLoading: boolean;
+  selectedError: boolean;
   submitting: boolean;
   errorMessage: string | null;
   onClose: () => void;
@@ -29,12 +31,14 @@ type RolePermissionsDialogProps = {
 export function RolePermissionsDialog({
   role,
   selected,
+  selectedLoading,
+  selectedError,
   submitting,
   errorMessage,
   onClose,
   onConfirm,
 }: RolePermissionsDialogProps) {
-  const { data: catalog, isLoading } = usePermissionCatalog();
+  const { data: catalog, isLoading, isError } = usePermissionCatalog();
   const [checked, setChecked] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -66,9 +70,13 @@ export function RolePermissionsDialog({
         </DialogHeader>
 
         <div className="max-h-80 space-y-2 overflow-y-auto rounded-xl border border-border/60 p-3">
-          {isLoading ? (
+          {isLoading || selectedLoading ? (
             <p className="py-6 text-center text-sm text-muted-foreground">
-              加载权限目录…
+              加载权限…
+            </p>
+          ) : isError || selectedError ? (
+            <p className="py-6 text-center text-sm text-destructive">
+              权限加载失败，请关闭后重试。
             </p>
           ) : (
             grouped.map((permission) => (
@@ -102,7 +110,7 @@ export function RolePermissionsDialog({
             取消
           </Button>
           <Button
-            disabled={submitting}
+            disabled={submitting || isLoading || selectedLoading || isError || selectedError}
             onClick={() => onConfirm(Array.from(checked))}
           >
             保存分配

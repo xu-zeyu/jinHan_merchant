@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { KeyRound, LogOut, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -20,10 +21,12 @@ import { useAuthStore } from "@/features/auth/store/use-auth-store";
 
 export function UserMenu() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const account = useAuthStore((state) => state.account);
   const logout = useAuthStore((state) => state.logout);
 
   const handleLogout = () => {
+    queryClient.clear();
     logout();
     router.replace(ROUTES.LOGIN);
   };

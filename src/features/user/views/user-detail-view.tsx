@@ -97,11 +97,12 @@ export function UserDetailView({ userId }: UserDetailProps) {
             </Link>
           </Button>
         }
-        description="用户资料与宠物档案查看（ADMIN-V1-12 / ADMIN-V1-13）"
+        description="用户资料与宠物档案。"
         title="用户详情"
       />
 
       <AsyncState
+        onRetry={() => void userQuery.refetch()}
         error={userQuery.error}
         isError={userQuery.isError}
         isLoading={userQuery.isLoading}
@@ -153,7 +154,7 @@ export function UserDetailView({ userId }: UserDetailProps) {
 
       <section className="mt-2">
         <div className="mb-3 flex items-center gap-2">
-          <PawPrint className="h-4 w-4 text-primary-700" />
+          <PawPrint className="h-4 w-4 text-brand-strong" />
           <h2 className="text-lg font-semibold">
             宠物数据
             {petsQuery.data ? (
@@ -165,6 +166,7 @@ export function UserDetailView({ userId }: UserDetailProps) {
         </div>
 
         <AsyncState
+          onRetry={() => void petsQuery.refetch()}
           error={petsQuery.error}
           isEmpty={
             !petsQuery.isLoading && (petsQuery.data?.pets.length ?? 0) === 0
@@ -188,7 +190,7 @@ export function UserDetailView({ userId }: UserDetailProps) {
                       src={pet.avatarUrl}
                     />
                   ) : (
-                    <PawPrint className="h-5 w-5 text-primary-700" />
+                    <PawPrint className="h-5 w-5 text-brand-strong" />
                   )}
                 </div>
                 <div className="min-w-0 flex-1">

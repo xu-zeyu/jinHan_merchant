@@ -23,7 +23,7 @@ export function isProtectedRoute(pathname: string) {
 
 /** 登录后默认落地页 */
 export function getDefaultAuthenticatedPath() {
-  return ROUTES.USERS;
+  return ROUTES.HOME;
 }
 
 export function getAuthenticatedRedirectPath(
@@ -40,8 +40,6 @@ export function getAuthenticatedRedirectPath(
 }
 
 export function buildLoginRedirectPath(pathname: string) {
-  const redirectTarget =
-    pathname === ROUTES.HOME ? getDefaultAuthenticatedPath() : pathname;
-  const searchParams = new URLSearchParams({ redirect: redirectTarget });
+  const searchParams = new URLSearchParams({ redirect: pathname });
   return `${ROUTES.LOGIN}?${searchParams.toString()}`;
 }

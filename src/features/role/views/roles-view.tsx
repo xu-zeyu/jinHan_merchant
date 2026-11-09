@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { KeyRound, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import { AsyncState } from "@/components/common/async-state";
 import { EmptyState } from "@/components/common/empty-state";
@@ -10,15 +10,7 @@ import {
   ListShell,
 } from "@/components/common/list-pagination";
 import { PageHeader } from "@/components/common/page-header";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { APP_CONFIG } from "@/constants/app-config";
 import { useHasPermission } from "@/features/auth/hooks/use-permission";
@@ -27,6 +19,7 @@ import { PERMISSION_CODES } from "@/permissions/permission-codes";
 
 import { RoleFormDialog } from "../components/role-form-dialog";
 import { RolePermissionsDialog } from "../components/role-permissions-dialog";
+import { RolesTable } from "../components/roles-table";
 import {
   useRoleMutations,
   useRolePermissions,
@@ -55,7 +48,7 @@ export function RolesView() {
     () => ({ ...pagination, keyword: keyword.trim() || undefined }),
     [pagination, keyword]
   );
-  const { data, isLoading, isError, error, isFetching } = useRoles(query);
+  const { data, isLoading, isError, error, isFetching, refetch } = useRoles(query);
   const {
     createMutation,
     updateMutation,
@@ -90,7 +83,7 @@ export function RolesView() {
             </Button>
           ) : null
         }
-        description="角色的增删改查与权限分配（ADMIN-V1-09 / ADMIN-V1-10）"
+        description="创建角色并配置可访问的功能。"
         title="角色"
       />
 
@@ -124,81 +117,31 @@ export function RolesView() {
         }
       >
         <AsyncState
+          onRetry={() => void refetch()}
           error={error}
           isEmpty={!isLoading && (data?.list.length ?? 0) === 0}
           isError={isError}
           isLoading={isLoading}
           empty={<EmptyState description="暂无角色数据" title="暂无数据" />}
         >
-          {(data?.list ?? []).map((role) => (
-            <div
-              key={role.id}
-              className="flex flex-wrap items-center gap-4 px-5 py-4 transition-colors hover:bg-muted/40"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                <KeyRound className="h-4 w-4 text-primary-700" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="truncate text-sm font-semibold">{role.name}</p>
-                  <code className="text-xs text-muted-foreground">
-                    {role.code}
-                  </code>
-                  <Badge variant={role.enabled ? "default" : "secondary"}>
-                    {role.enabled ? "启用" : "禁用"}
-                  </Badge>
-                </div>
-                <p className="mt-1 truncate text-xs text-muted-foreground">
-                  {role.description || "暂无说明"}
-                </p>
-              </div>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button size="icon" variant="ghost">
-                    <MoreHorizontal />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    disabled={!canAssign}
-                    onClick={() => setPermRole(role)}
-                  >
-                    <KeyRound /> 分配权限
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    disabled={!canUpdate}
-                    onClick={() => {
-                      setEditing(role);
-                      setFormOpen(true);
-                    }}
-                  >
-                    <Pencil /> 编辑
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="text-destructive focus:text-destructive"
-                    disabled={!canDelete}
-                    onClick={() => {
-                      if (window.confirm(`确认删除角色「${role.name}」？`)) {
-                        deleteMutation.mutate(role.id, {
-                          onSuccess: () => toast({ title: "已删除" }),
-                          onError: (err) =>
-                            toast({
-                              title: "删除失败",
-                              description:
-                                err instanceof Error ? err.message : undefined,
-                            }),
-                        });
-                      }
-                    }}
-                  >
-                    <Trash2 /> 删除
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          ))}
+          <RolesTable
+            roles={data?.list ?? []}
+            canAssign={canAssign}
+            canUpdate={canUpdate}
+            canDelete={canDelete}
+            onAssign={setPermRole}
+            onEdit={(role) => { setEditing(role); setFormOpen(true); }}
+            onDelete={(role) => {
+              if (!window.confirm(`确认删除角色「${role.name}」？`)) return;
+              deleteMutation.mutate(role.id, {
+                onSuccess: () => toast({ title: "已删除" }),
+                onError: (err) => toast({
+                  title: "删除失败",
+                  description: err instanceof Error ? err.message : undefined,
+                }),
+              });
+            }}
+          />
         </AsyncState>
       </ListShell>
 
@@ -244,6 +187,8 @@ export function RolesView() {
         }
         role={permRole}
         selected={permQuery.data ?? []}
+        selectedLoading={permQuery.isLoading}
+        selectedError={permQuery.isError}
         submitting={assignMutation.isPending}
         onClose={() => {
           setPermRole(null);

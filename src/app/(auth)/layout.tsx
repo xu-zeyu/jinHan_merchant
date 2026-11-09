@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ArrowUpRight, PawPrint, ShieldCheck } from "lucide-react";
 
 export default function AuthLayout({
   children,
@@ -6,32 +7,30 @@ export default function AuthLayout({
   children: ReactNode;
 }>) {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,#fff2d6_0%,#fff8eb_35%,#ffffff_100%)] px-4 py-10">
-      <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-6xl items-center justify-center">
-        <div className="grid w-full overflow-hidden rounded-[32px] border border-white/80 bg-white/90 shadow-xl shadow-primary-100/40 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="hidden bg-[linear-gradient(160deg,#ffefcc_0%,#fff7e6_45%,#fdfdfb_100%)] p-10 lg:flex lg:flex-col lg:justify-between">
-            <div>
-              <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-primary-700 shadow-sm">
-                PetTown Admin
-              </span>
-              <h1 className="mt-6 text-4xl font-semibold leading-tight text-slate-900">
-                宠物产品
-                <br />
-                管理后台
-              </h1>
-              <p className="mt-4 max-w-md text-sm leading-7 text-slate-600">
-                管理员账号与角色权限、C 端用户与宠物数据，一处清晰可控。
-              </p>
-            </div>
-            <div className="rounded-[28px] bg-white/80 p-6 shadow-sm">
-              <p className="text-sm font-semibold text-slate-900">安全提示</p>
-              <p className="mt-2 text-sm leading-6 text-slate-500">
-                首次登录请立即修改初始密码；账号停用后所有会话将立即失效。
-              </p>
-            </div>
-          </div>
-          <div className="p-6 md:p-10">{children}</div>
+    <div className="glass-canvas min-h-screen px-4 py-6 sm:px-8">
+      <div className="mx-auto grid min-h-[calc(100vh-3rem)] max-w-6xl gap-5 lg:grid-cols-[minmax(360px,43%)_1fr]">
+      <div className="glass-highlight hidden flex-col justify-between rounded-[32px] p-10 lg:flex xl:p-14">
+        <div className="flex items-center gap-3">
+          <div className="glass-surface flex h-10 w-10 items-center justify-center rounded-2xl text-brand-strong"><PawPrint className="h-5 w-5" /></div>
+          <div><p className="text-sm font-semibold">PetTown</p><p className="text-[11px] tracking-[0.16em] text-muted-foreground">ADMIN CONSOLE</p></div>
         </div>
+        <div className="max-w-md">
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-strong">管理工作台</span>
+          <h1 className="mt-5 text-5xl font-semibold leading-[1.15] tracking-tight">清晰管理，<br />每一项都井然有序。</h1>
+          <p className="mt-6 text-sm leading-7 text-muted-foreground">集中处理账号、权限与用户资料。只呈现当前工作需要的信息。</p>
+          <div className="mt-10 space-y-4 border-t border-white/50 pt-6 text-sm dark:border-white/10">
+            <div className="flex items-center justify-between"><span>01　账号与角色权限</span><ArrowUpRight className="h-4 w-4 text-muted-foreground" /></div>
+            <div className="flex items-center justify-between"><span>02　用户与宠物档案</span><ArrowUpRight className="h-4 w-4 text-muted-foreground" /></div>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground"><ShieldCheck className="h-4 w-4" /> 仅限授权人员访问</div>
+      </div>
+      <div className="glass-surface flex min-h-[calc(100vh-3rem)] items-center justify-center rounded-[32px] px-6 py-12 sm:px-10">
+        <div className="w-full max-w-[400px]">
+          <div className="mb-12 flex items-center gap-2 lg:hidden"><div className="glass-highlight flex h-9 w-9 items-center justify-center rounded-xl"><PawPrint className="h-5 w-5 text-brand-strong" /></div><span className="text-lg font-semibold">PetTown</span></div>
+          {children}
+        </div>
+      </div>
       </div>
     </div>
   );

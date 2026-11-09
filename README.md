@@ -16,6 +16,7 @@
 
 | 模块 | 需求 | 说明 |
 |---|---|---|
+| 概览 | 通用后台入口 | 按当前权限展示模块与真实列表总数 |
 | 登录与验证码 | ADMIN-V1-01 / 02 | 图形验证码 + 用户名密码登录 |
 | 会话与菜单 | ADMIN-V1-03 | 当前管理员信息、权限码、按权限返回菜单 |
 | 管理员账号 | ADMIN-V1-04~08 | 分页查询、创建、编辑、启停、删除、重置密码、强制改密 |
@@ -47,6 +48,8 @@ npm run dev                  # http://localhost:3000
 ```
 
 前端通过 Next.js rewrites 将 `/api/admin/*` 代理到后端管理服务，避免跨域。
+
+界面参考 [Glassmorphism Admin Panel UI](https://github.com/nesdesignco/Glassmorphism-Admin-Panel-UI) 的玻璃层次、主题切换和后台结构，并保留本项目的真实 API 契约。桌面端和窄屏均可导航，支持暖金、薄荷、雾紫及深浅色切换；管理员与用户列表使用 TanStack Table 展示服务端分页数据。页面入口按权限显示，服务端仍负责最终鉴权。
 
 ## 开发规范
 

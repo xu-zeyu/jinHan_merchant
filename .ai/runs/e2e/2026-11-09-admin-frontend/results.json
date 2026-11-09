@@ -1,0 +1,332 @@
+{
+  "time": "2026-11-09 16:27:52",
+  "base": "http://localhost:3000/api/admin",
+  "passed": 50,
+  "total": 54,
+  "results": [
+    {
+      "id": "V1-01.a",
+      "title": "返回验证码 ID + 图片",
+      "pass": true,
+      "detail": "captchaId=8affefc6… imageBase64=2960B png=True"
+    },
+    {
+      "id": "V1-01.b",
+      "title": "验证码一次性（复用被拒）",
+      "pass": true,
+      "detail": "first=200 reuse=4002 验证码错误或已失效"
+    },
+    {
+      "id": "V1-02.a",
+      "title": "正确凭据登录成功并回写 last_login_time",
+      "pass": true,
+      "detail": "token=ge0rC7pc… last_login 2026-11-09 16:27:56 → 2026-11-09 16:27:59"
+    },
+    {
+      "id": "V1-02.b",
+      "title": "登录响应含 token 与 passwordChangeRequired",
+      "pass": true,
+      "detail": "passwordChangeRequired=False"
+    },
+    {
+      "id": "V1-02.c",
+      "title": "验证码错误不计入密码失败次数（未触发锁定）",
+      "pass": true,
+      "detail": "after 1 bad-captcha + 4 bad-pwd → correct login code=200"
+    },
+    {
+      "id": "V1-02.d",
+      "title": "未知账号/错误密码统一错误（4003）",
+      "pass": false,
+      "detail": "code=400 msg=账号或密码错误"
+    },
+    {
+      "id": "V1-03.a",
+      "title": "me 返回账号+角色+权限码",
+      "pass": true,
+      "detail": "roles=0 permissions=16"
+    },
+    {
+      "id": "V1-03.b",
+      "title": "超管权限码覆盖全部内置码",
+      "pass": true,
+      "detail": "missing=[]"
+    },
+    {
+      "id": "V1-03.c",
+      "title": "菜单树含 accounts/roles/permissions",
+      "pass": true,
+      "detail": "paths=['/system/accounts', '/system/permissions', '/system/roles']"
+    },
+    {
+      "id": "V1-04.a",
+      "title": "分页查询 page/size/total",
+      "pass": true,
+      "detail": "list=2 total=5"
+    },
+    {
+      "id": "V1-04.b",
+      "title": "按用户名筛选",
+      "pass": true,
+      "detail": "hits=1"
+    },
+    {
+      "id": "V1-04.c",
+      "title": "按状态筛选（enabled=false 仅禁用）",
+      "pass": true,
+      "detail": "hits=['cc']"
+    },
+    {
+      "id": "V1-10.a",
+      "title": "分配角色权限码集合成功",
+      "pass": true,
+      "detail": "code=200 操作成功"
+    },
+    {
+      "id": "V1-10.b",
+      "title": "回读角色权限一致",
+      "pass": true,
+      "detail": "perms=['system:account:read', 'system:role:read']"
+    },
+    {
+      "id": "V1-10.c",
+      "title": "非法权限码被拒绝",
+      "pass": true,
+      "detail": "code=400 msg=包含未知权限点"
+    },
+    {
+      "id": "V1-05.a",
+      "title": "创建账号成功且 passwordChangeRequired=true",
+      "pass": true,
+      "detail": "id=12 pcr=True"
+    },
+    {
+      "id": "V1-05.b",
+      "title": "用户名重复返回业务错误码 4091",
+      "pass": true,
+      "detail": "code=4091 msg=管理员账号已存在"
+    },
+    {
+      "id": "V1-05.c",
+      "title": "弱密码被拒（无数字/无字母/过短）",
+      "pass": true,
+      "detail": "3 种弱密码均拒绝"
+    },
+    {
+      "id": "V1-05.d",
+      "title": "用户名格式非法被拒（非纯字母数字）",
+      "pass": true,
+      "detail": "code=400 msg=需要匹配正则表达式\"[A-Za-z0-9]{4,50}\""
+    },
+    {
+      "id": "V1-05.e",
+      "title": "新账号可登录且 passwordChangeRequired=true",
+      "pass": true,
+      "detail": "account=e2ero12889"
+    },
+    {
+      "id": "V1-06.a",
+      "title": "编辑显示名/手机号生效",
+      "pass": true,
+      "detail": "displayName=E2E只读账号改 phone=13800002222"
+    },
+    {
+      "id": "V1-06.b",
+      "title": "禁止修改自身角色（防提权）",
+      "pass": true,
+      "detail": "code=400 msg=不能通过管理接口修改自身或超级管理员"
+    },
+    {
+      "id": "V1-06.c",
+      "title": "改角色后目标账号权限码同步变化",
+      "pass": false,
+      "detail": "before=[] after=[]"
+    },
+    {
+      "id": "V1-07.a",
+      "title": "停用后该账号 token 立即失效",
+      "pass": true,
+      "detail": "disable=200 me_after=401/401"
+    },
+    {
+      "id": "V1-07.b",
+      "title": "禁止停用自己/超级管理员",
+      "pass": true,
+      "detail": "code=400 msg=不能通过管理接口修改自身或超级管理员"
+    },
+    {
+      "id": "V1-07.c",
+      "title": "禁止删除自己/超级管理员",
+      "pass": true,
+      "detail": "code=400 msg=不能通过管理接口修改自身或超级管理员"
+    },
+    {
+      "id": "V1-07.d",
+      "title": "非超管删除超管被拒",
+      "pass": true,
+      "detail": "code=403 msg=无操作权限"
+    },
+    {
+      "id": "V1-07.e",
+      "title": "删除账号后列表不可见",
+      "pass": true,
+      "detail": "delete=200 list_hits=0"
+    },
+    {
+      "id": "V1-08.a",
+      "title": "重置密码成功并踢出旧会话",
+      "pass": true,
+      "detail": "reset=200 old_token_me=401"
+    },
+    {
+      "id": "V1-08.b",
+      "title": "重置弱密码被拒",
+      "pass": true,
+      "detail": "code=400 msg=需要匹配正则表达式\"(?=.*[A-Za-z])(?=.*[0-9])[\\x21-\\x7E]{8,64}\""
+    },
+    {
+      "id": "V1-08.c",
+      "title": "重置后登录 passwordChangeRequired=true",
+      "pass": true,
+      "detail": "pcr=True"
+    },
+    {
+      "id": "V1-08.d",
+      "title": "新密码与原密码相同被拒",
+      "pass": true,
+      "detail": "code=400 msg=新密码不能与原密码相同"
+    },
+    {
+      "id": "V1-08.e",
+      "title": "改密弱密码被拒",
+      "pass": true,
+      "detail": "code=400 msg=需要匹配正则表达式\"(?=.*[A-Za-z])(?=.*[0-9])[\\x21-\\x7E]{8,64}\""
+    },
+    {
+      "id": "V1-08.f",
+      "title": "改密成功后旧 token 失效",
+      "pass": true,
+      "detail": "change=200 old_token=401"
+    },
+    {
+      "id": "V1-08.g",
+      "title": "新密码登录成功且 pcr=false",
+      "pass": true,
+      "detail": "pcr=False"
+    },
+    {
+      "id": "V1-09.a",
+      "title": "角色详情可查",
+      "pass": true,
+      "detail": "code=e2e_ref12889"
+    },
+    {
+      "id": "V1-09.b",
+      "title": "角色编辑生效",
+      "pass": true,
+      "detail": "name=E2E被引用角色改"
+    },
+    {
+      "id": "V1-09.c",
+      "title": "角色 code 唯一（重复被拒）",
+      "pass": true,
+      "detail": "code=400 msg=角色编码已存在"
+    },
+    {
+      "id": "V1-09.d",
+      "title": "被账号引用的角色删除被拒并提示引用数",
+      "pass": true,
+      "detail": "code=400 msg=角色已被 1 个账号引用，不能删除"
+    },
+    {
+      "id": "V1-09.e",
+      "title": "解除引用后角色可删除",
+      "pass": true,
+      "detail": "delete=200 get_after=404"
+    },
+    {
+      "id": "V1-11.a",
+      "title": "权限目录含全部内置编码",
+      "pass": true,
+      "detail": "total=16 missing=[]"
+    },
+    {
+      "id": "V1-11.b",
+      "title": "sync 幂等（重复执行不产生重复记录）",
+      "pass": true,
+      "detail": "rows=16 unique=16 before=16"
+    },
+    {
+      "id": "V1-04.d",
+      "title": "无权限角色调用返回 403",
+      "pass": true,
+      "detail": "http=403 code=403 msg=无操作权限"
+    },
+    {
+      "id": "V1-03.d",
+      "title": "不同角色菜单/权限随角色变化（无权限角色菜单为空）",
+      "pass": false,
+      "detail": "menus=[]"
+    },
+    {
+      "id": "V1-12.a",
+      "title": "C 端用户分页查询",
+      "pass": true,
+      "detail": "list=2 total=2"
+    },
+    {
+      "id": "V1-12.b",
+      "title": "按手机号筛选",
+      "pass": true,
+      "detail": "hits=1"
+    },
+    {
+      "id": "V1-12.c",
+      "title": "用户详情返回 id/phone/source/status",
+      "pass": true,
+      "detail": "keys=['createdAt', 'id', 'phone', 'source', 'status']"
+    },
+    {
+      "id": "V1-12.d",
+      "title": "封禁用户状态生效",
+      "pass": true,
+      "detail": "status=BANNED"
+    },
+    {
+      "id": "V1-12.e",
+      "title": "解封恢复正常",
+      "pass": true,
+      "detail": "status=ACTIVE"
+    },
+    {
+      "id": "V1-12.f",
+      "title": "非法状态值被拒",
+      "pass": true,
+      "detail": "code= msg="
+    },
+    {
+      "id": "V1-13.a",
+      "title": "用户宠物数据返回且不含敏感字段",
+      "pass": true,
+      "detail": "petCount=1 pets=1 no_sensitive=True"
+    },
+    {
+      "id": "V1-13.b",
+      "title": "软删宠物不再返回（与移动端口径一致）",
+      "pass": true,
+      "detail": "petCount=0"
+    },
+    {
+      "id": "V1-02.e",
+      "title": "连续 5 次失败锁定且正确密码亦被拒（423）",
+      "pass": true,
+      "detail": "fail_codes=['400', '400', '400', '400', '423'] locked_correct=423 密码连续错误 5 次，账号暂锁 30 分钟"
+    },
+    {
+      "id": "V1-01.c",
+      "title": "同一 IP 每分钟限 20 次验证码",
+      "pass": false,
+      "detail": "limited_at=(13, '429', '验证码请求过于频繁，请稍后再试')"
+    }
+  ]
+}

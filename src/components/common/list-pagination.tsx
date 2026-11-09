@@ -81,7 +81,7 @@ export type ListShellProps = {
 /** 卡片化列表外壳 */
 export function ListShell({ header, children, footer }: ListShellProps) {
   return (
-    <section className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
+    <section className="glass-surface overflow-hidden rounded-2xl">
       {header}
       <div className="divide-y divide-border/60">{children}</div>
       {footer}

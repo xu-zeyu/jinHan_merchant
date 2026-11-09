@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AlertCircle, LoaderCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 import { cn } from "@/lib/cn";
 
@@ -11,6 +12,7 @@ type AsyncStateProps = {
   empty?: ReactNode;
   children: ReactNode;
   className?: string;
+  onRetry?: () => void;
 };
 
 /** 列表/详情的 加载 / 错误 / 空态 统一处理 */
@@ -22,6 +24,7 @@ export function AsyncState({
   empty,
   children,
   className,
+  onRetry,
 }: AsyncStateProps) {
   if (isLoading) {
     return (
@@ -48,6 +51,9 @@ export function AsyncState({
       >
         <AlertCircle className="h-6 w-6 text-destructive" />
         <p className="mt-3 text-sm text-destructive">{message}</p>
+        {onRetry ? (
+          <Button className="mt-4" size="sm" variant="outline" onClick={onRetry}>重试</Button>
+        ) : null}
       </div>
     );
   }

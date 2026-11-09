@@ -23,7 +23,7 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  if (isAuthenticated && (pathname === ROUTES.HOME || isAuthRoute(pathname))) {
+  if (isAuthenticated && isAuthRoute(pathname)) {
     // 改密页对已登录用户开放
     if (pathname === ROUTES.CHANGE_PASSWORD) {
       return NextResponse.next();

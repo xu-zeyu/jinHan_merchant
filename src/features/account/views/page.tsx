@@ -60,7 +60,7 @@ export function AccountsView() {
     [pagination, username, enabledFilter]
   );
 
-  const { data, isLoading, isError, error, isFetching } = useAccounts(query);
+  const { data, isLoading, isError, error, isFetching, refetch } = useAccounts(query);
   const {
     createMutation,
     updateMutation,
@@ -117,7 +117,7 @@ export function AccountsView() {
             </Button>
           ) : null
         }
-        description="管理员账号的查询、创建、编辑、启停、删除与密码重置（ADMIN-V1-04~08）"
+        description="管理后台账号、角色和登录状态。"
         title="管理员"
       />
 
@@ -169,6 +169,7 @@ export function AccountsView() {
         }
       >
         <AsyncState
+          onRetry={() => void refetch()}
           error={error}
           isEmpty={!isLoading && (data?.list.length ?? 0) === 0}
           isError={isError}

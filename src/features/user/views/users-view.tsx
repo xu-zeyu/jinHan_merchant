@@ -1,8 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Ban, Eye, ShieldCheck, UserRound } from "lucide-react";
-import Link from "next/link";
 
 import { AsyncState } from "@/components/common/async-state";
 import { EmptyState } from "@/components/common/empty-state";
@@ -11,22 +9,16 @@ import {
   ListShell,
 } from "@/components/common/list-pagination";
 import { PageHeader } from "@/components/common/page-header";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { APP_CONFIG } from "@/constants/app-config";
-import { ROUTES } from "@/constants/routes";
 import { useHasPermission } from "@/features/auth/hooks/use-permission";
 import { useToast } from "@/hooks/use-toast";
 import { PERMISSION_CODES } from "@/permissions/permission-codes";
 
-import { USER_STATUS, USER_STATUS_LABELS } from "../constants/user.constants";
+import { USER_STATUS } from "../constants/user.constants";
+import { UsersTable } from "../components/users-table";
 import { useUserStatusMutation, useUsers } from "../hooks/use-users";
 import type { AppUser } from "../types/user.types";
-
-function formatDate(value: string) {
-  return value ? value.replace("T", " ").slice(0, 16) : "-";
-}
 
 export function UsersView() {
   const { toast } = useToast();
@@ -42,7 +34,7 @@ export function UsersView() {
     () => ({ ...pagination, phone: phone.trim() || undefined }),
     [pagination, phone]
   );
-  const { data, isLoading, isError, error, isFetching } = useUsers(query);
+  const { data, isLoading, isError, error, isFetching, refetch } = useUsers(query);
   const statusMutation = useUserStatusMutation();
 
   const toggleStatus = (user: AppUser) => {
@@ -72,7 +64,7 @@ export function UsersView() {
   return (
     <>
       <PageHeader
-        description="C 端用户的分页查询、详情查看与封禁/解封（ADMIN-V1-12）"
+        description="查找用户、查看宠物档案并管理账号状态。"
         title="C 端用户"
       />
 
@@ -106,6 +98,7 @@ export function UsersView() {
         }
       >
         <AsyncState
+          onRetry={() => void refetch()}
           error={error}
           isEmpty={!isLoading && (data?.list.length ?? 0) === 0}
           isError={isError}
@@ -114,46 +107,7 @@ export function UsersView() {
             <EmptyState description="没有符合条件的用户" title="暂无数据" />
           }
         >
-          {(data?.list ?? []).map((user) => {
-            const banned = user.status === USER_STATUS.BANNED;
-            return (
-              <div
-                key={user.id}
-                className="flex flex-wrap items-center gap-4 px-5 py-4 transition-colors hover:bg-muted/40"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                  <UserRound className="h-4 w-4 text-primary-700" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-semibold">{user.phone}</p>
-                    <Badge variant="outline">{user.source}</Badge>
-                    <Badge variant={banned ? "destructive" : "default"}>
-                      {USER_STATUS_LABELS[user.status] ?? user.status}
-                    </Badge>
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    注册于 {formatDate(user.createdAt)} · ID {user.id}
-                  </p>
-                </div>
-
-                <Button asChild size="sm" variant="outline">
-                  <Link href={ROUTES.USER_DETAIL(user.id)}>
-                    <Eye /> 查看详情与宠物
-                  </Link>
-                </Button>
-                <Button
-                  disabled={!canStatus}
-                  size="sm"
-                  variant={banned ? "outline" : "destructive"}
-                  onClick={() => toggleStatus(user)}
-                >
-                  {banned ? <ShieldCheck /> : <Ban />}
-                  {banned ? "解封" : "封禁"}
-                </Button>
-              </div>
-            );
-          })}
+          <UsersTable users={data?.list ?? []} canChangeStatus={canStatus} onToggleStatus={toggleStatus} />
         </AsyncState>
       </ListShell>
     </>
