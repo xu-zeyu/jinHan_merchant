@@ -1,0 +1,68 @@
+schema_version: 1
+project:
+  id: "jinhan-merchant"
+  name: "宠物产品管理后台"
+  description: "宠物产品管理后台；v1.0.0 按 TAPD 需求池确定范围并清理现有电商演示功能。"
+  status: "discovery_pending"
+
+  repository:
+    path: "/Users/xuzeyu/Documents/company/jinHan/jinHan_merchant"
+    remote_url: "git@github.com:xu-zeyu/jinHan_merchant.git"
+    default_branch: "main（用户确认；本地当前及跟踪分支也为 main，远程未能实时回读）"
+
+  tapd:
+    workspace_id: "32445978（用户提供的 TAPD 链接路径，页面未能回读）"
+    project_id: "32445978（用户确认）"
+    project_url: "https://www.tapd.cn/tapd_fe/32445978/story/list" # 从用户链接去掉查询参数后的地址；页面未能回读
+
+  product:
+    target_users: ["管理端管理员（历史 TAPD v1.0.0 清单推断，待当前需求池核实）"]
+    core_scenarios: ["管理端登录与当前管理员信息", "管理员账号、角色及权限管理", "查看和管理 C 端用户及其宠物资料"]
+    business_goals: ["以 TAPD v1.0.0 需求池为准进行项目瘦身（用户明确要求）", "待确认：当前 TAPD 需求池未能实时读取，正式验收范围与指标未核实"]
+
+  stack_profiles: ["nextjs_frontend"]
+  technology:
+    languages: ["TypeScript", "TSX", "CSS"]
+    frameworks: ["Next.js 15 App Router", "React 19", "Tailwind CSS 3", "Zustand 5", "Radix UI 组件", "Recharts 2"]
+    runtime_versions:
+      node: "未约束：package.json 无 engines 字段"
+      next: "^15.0.0（package.json）"
+      react: "^19.0.0（package.json）"
+      typescript: "^5.6.0（package.json）"
+    databases: ["不适用：当前仓库未发现数据库连接代码；.env.example 仅有 DATABASE_URL 模板"]
+    build_tools: ["npm（package-lock.json）", "Next.js CLI", "TypeScript"]
+
+  commands:
+    install: "npm ci"
+    build: "npm run build"
+    test: "不适用：package.json 未配置 test 脚本；可运行 npm run type-check"
+    lint: "npm run lint（package.json 声明 next lint，尚未验证在 Next.js 15 中可执行）"
+
+  modules:
+    source_of_truth: ".ai/project-knowledge/jinhan-merchant/modules.md"
+    last_verified: null
+
+  ui:
+    guidelines: "不适用：用户明确表示管理后台不需要单独 UI 交付"
+    design_source: "不适用：本次不接入外部 UI 设计稿；现有界面样式见 src/app/globals.css 与 tailwind.config.ts"
+    ardot_project_id: "不适用：用户明确表示管理后台不需要单独 UI 交付"
+    ardot_mcp_connection: "不适用：本项目无需 Ardot UI 入项"
+    ardot_mcp_documentation: "不适用：本项目无需 Ardot UI 入项"
+
+  skills:
+    code_analysis: []
+    backend_development: []
+    frontend_development: []
+    mobile_development: []
+    testing: []
+    tapd: []
+    wecom: []
+
+  permissions:
+    may_read_repository: true
+    may_edit_source_code_after_approval: true
+    may_run_local_tests: true
+    may_run_database_migrations: false
+    may_commit_or_push: false
+    may_deploy: false
+    may_touch_production: false

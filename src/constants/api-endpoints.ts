@@ -1,37 +1,31 @@
+/** 管理端接口路径。契约来源：Apifox 项目 9001157（PetTown 管理后台接口 v0.0.1） */
 export const API_ENDPOINTS = {
-  // Auth
-  LOGIN: "/api/auth/login",
-  LOGOUT: "/api/auth/logout",
-  REGISTER: "/api/auth/register",
-  REFRESH_TOKEN: "/api/auth/refresh",
+  // 认证（ADMIN-V1-01/02/03/08）
+  CAPTCHA: "/api/admin/verification/captcha",
+  LOGIN: "/api/admin/auth/login",
+  ME: "/api/admin/auth/me",
+  MENUS: "/api/admin/auth/menus",
+  CHANGE_PASSWORD: "/api/admin/auth/change-password",
 
-  // Products
-  PRODUCTS: "/api/products",
-  PRODUCT_DETAIL: (id: string) => `/api/products/${id}`,
+  // 管理员账号（ADMIN-V1-04~08）
+  ACCOUNTS: "/api/admin/system/accounts",
+  ACCOUNT: (id: number) => `/api/admin/system/accounts/${id}`,
+  ACCOUNT_STATUS: (id: number) => `/api/admin/system/accounts/${id}/status`,
+  ACCOUNT_RESET_PASSWORD: (id: number) =>
+    `/api/admin/system/accounts/${id}/reset-password`,
 
-  // Categories
-  CATEGORIES: "/api/categories",
-  CATEGORY_DETAIL: (id: string) => `/api/categories/${id}`,
+  // 角色（ADMIN-V1-09/10）
+  ROLES: "/api/admin/system/roles",
+  ROLE: (id: number) => `/api/admin/system/roles/${id}`,
+  ROLE_PERMISSIONS: (id: number) => `/api/admin/system/roles/${id}/permissions`,
 
-  // Orders
-  ORDERS: "/api/orders",
-  ORDER_DETAIL: (id: string) => `/api/orders/${id}`,
+  // 权限点（ADMIN-V1-11）
+  PERMISSIONS: "/api/admin/system/permissions",
+  PERMISSIONS_SYNC: "/api/admin/system/permissions/sync",
 
-  // Refunds
-  REFUNDS: "/api/refunds",
-  REFUND_DETAIL: (id: string) => `/api/refunds/${id}`,
-
-  // Customers
-  CUSTOMERS: "/api/customers",
-  CUSTOMER_DETAIL: (id: string) => `/api/customers/${id}`,
-
-  // AI
-  AI_GENERATE: "/api/ai/generate",
-
-  // Analytics
-  ANALYTICS: "/api/analytics",
-
-  // Finance
-  FINANCE_TRANSACTIONS: "/api/finance/transactions",
-  FINANCE_SETTLEMENTS: "/api/finance/settlements",
+  // C 端用户与宠物（ADMIN-V1-12/13）
+  USERS: "/api/admin/users",
+  USER: (id: string) => `/api/admin/users/${id}`,
+  USER_STATUS: (id: string) => `/api/admin/users/${id}/status`,
+  USER_PETS: (id: string) => `/api/admin/users/${id}/pets`,
 } as const;

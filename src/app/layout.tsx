@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+import { Toaster } from "@/components/common/toaster";
+import { QueryProvider } from "@/providers/query-provider";
+
 export const metadata: Metadata = {
-  title: "宠物电商商家后台",
-  description: "现代化 SaaS 风格宠物电商商家后台管理系统",
+  title: "宠物产品管理后台",
+  description: "PetTown 宠物产品管理后台",
 };
 
 export default function RootLayout({
@@ -13,7 +16,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <QueryProvider>
+          {children}
+          <Toaster />
+        </QueryProvider>
+      </body>
     </html>
   );
 }

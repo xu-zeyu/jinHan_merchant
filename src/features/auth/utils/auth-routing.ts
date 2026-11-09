@@ -1,54 +1,47 @@
-import { ROUTES } from "@/constants/routes";
-
-const AUTH_ROUTE_SET = new Set<string>([
-  ROUTES.LOGIN,
-  ROUTES.REGISTER,
-  ROUTES.FORGOT_PASSWORD,
-]);
-
-const PROTECTED_ROUTE_PREFIXES = [
-  ROUTES.DASHBOARD,
-  ROUTES.PRODUCTS,
-  ROUTES.CATEGORIES,
-  ROUTES.ORDERS,
-  ROUTES.REFUNDS,
-  ROUTES.CUSTOMERS,
-  ROUTES.AI_PRODUCT_GENERATOR,
-  ROUTES.AI_CONTENT_WRITER,
-  ROUTES.ANALYTICS,
-  ROUTES.FINANCE,
-  ROUTES.SETTINGS,
-];
+import {
+  AUTH_ROUTES,
+  PROTECTED_ROUTE_PREFIXES,
+  ROUTES,
+} from "@/constants/routes";
 
 function isRouteMatch(pathname: string, route: string) {
   return pathname === route || pathname.startsWith(`${route}/`);
 }
 
 export function isAuthRoute(pathname: string) {
-  return AUTH_ROUTE_SET.has(pathname);
+  return (AUTH_ROUTES as readonly string[]).includes(pathname);
 }
 
 export function isProtectedRoute(pathname: string) {
   if (pathname === ROUTES.HOME) {
     return true;
   }
+  return PROTECTED_ROUTE_PREFIXES.some((prefix) =>
+    isRouteMatch(pathname, prefix)
+  );
+}
 
-  return PROTECTED_ROUTE_PREFIXES.some((route) => isRouteMatch(pathname, route));
+/** 登录后默认落地页 */
+export function getDefaultAuthenticatedPath() {
+  return ROUTES.USERS;
 }
 
 export function getAuthenticatedRedirectPath(
   redirectTarget: string | null | undefined
 ) {
-  if (!redirectTarget || !redirectTarget.startsWith("/") || redirectTarget.startsWith("//")) {
-    return ROUTES.DASHBOARD;
+  if (
+    !redirectTarget ||
+    !redirectTarget.startsWith("/") ||
+    redirectTarget.startsWith("//")
+  ) {
+    return getDefaultAuthenticatedPath();
   }
-
   return redirectTarget;
 }
 
 export function buildLoginRedirectPath(pathname: string) {
-  const redirectTarget = pathname === ROUTES.HOME ? ROUTES.DASHBOARD : pathname;
+  const redirectTarget =
+    pathname === ROUTES.HOME ? getDefaultAuthenticatedPath() : pathname;
   const searchParams = new URLSearchParams({ redirect: redirectTarget });
-
   return `${ROUTES.LOGIN}?${searchParams.toString()}`;
 }

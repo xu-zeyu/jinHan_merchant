@@ -1,0 +1,23 @@
+id: "nextjs_frontend"
+display_name: "Next.js / React Web 前端"
+applies_to: ["Next.js App Router 项目", "React Web 前端"]
+
+discovery:
+  inspect_files:
+    - "package.json"
+    - "package-lock.json"
+    - "next.config.js"
+    - "tailwind.config.ts"
+    - "src/app"
+    - "src/features"
+  identify:
+    - "Next.js、React、TypeScript 和 Node.js 版本约束"
+    - "路由与布局、Server/Client Component 边界"
+    - "数据来源、API 封装、认证与权限现状"
+    - "样式令牌、响应式行为与组件库"
+    - "构建、类型检查、代码检查和测试命令"
+
+rules:
+  - "根据锁文件选择包管理器，并以实际源码核实功能状态。"
+  - "遵循当前 App Router 与 feature 目录组织。"
+  - "不得把静态示例数据或环境变量模板当作已接通的后端服务。"

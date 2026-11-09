@@ -1,0 +1,40 @@
+# 配置结构版本，修改字段格式时递增
+schema_version: 1
+
+# 当前工作空间可选择的项目注册表；每个仓库登记一条记录。
+projects:
+  - id: "jinhan-merchant"
+    name: "宠物产品管理后台"
+    config: "../projects/jinhan-merchant.yaml"
+    repository_path: "/Users/xuzeyu/Documents/company/jinHan/jinHan_merchant"
+    enabled: true
+    stacks: ["nextjs_frontend"]
+    description: "宠物产品管理后台；现有 Next.js 页面仍含电商演示内容，v1.0.0 需按 TAPD 需求瘦身"
+
+  - id: "jinhan-miniapp"
+    name: "金晗小程序"
+    config: "../projects/jinhan-miniapp.yaml"
+    repository_path: "/Users/xuzeyu/Documents/company/jinHan/jinHan_miniApp"
+    enabled: true
+    stacks: ["vue_frontend"]
+    description: "金晗商城客户端：uni-app / Vue 3，包含微信小程序、H5 和 App 构建配置"
+
+  # 稳定且唯一的项目 ID，需与项目配置中的 project.id 一致
+  - id: "pet-system"
+    # 项目展示名称
+    name: "宠物管理系统"
+    # 相对本文件的项目配置路径
+    config: "../projects/pet-system.yaml"
+    # 仓库根目录；写入前据此核对身份
+    repository_path: "/Users/xuzeyu/Documents/company/jinHan/pettown-server"
+    # 是否允许选择此项目
+    enabled: true
+    # 技术栈配置 ID 列表，需与项目配置对应
+    stacks: ["java_spring"]
+    # 项目范围简介
+    description: "pettown-server：Java 17 / Spring Boot 的 App、小程序、管理端后端服务"
+
+# 项目选择与写入前的校验策略
+selection:
+  require_explicit_project_id_when_ambiguous: true # 多项目场景必须明确选择
+  verify_repository_path_before_writing: true       # 写入前核对仓库路径

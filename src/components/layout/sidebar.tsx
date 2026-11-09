@@ -1,64 +1,96 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
-  BarChart3,
-  CreditCard,
-  LayoutDashboard,
-  LoaderCircle,
-  Package,
+  KeyRound,
+  LayoutGrid,
+  type LucideIcon,
   PawPrint,
   Settings,
-  ShoppingCart,
-  Sparkles,
+  ShieldCheck,
   Users,
 } from "lucide-react";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/constants/routes";
+import { useMenus } from "@/features/auth/hooks/use-me";
+import { useHasPermission } from "@/features/auth/hooks/use-permission";
+import type { MenuItem } from "@/features/auth/types/auth.types";
 import { cn } from "@/lib/cn";
+import { PERMISSION_CODES } from "@/permissions/permission-codes";
 
-const mainNavItems = [
-  { href: ROUTES.DASHBOARD, label: "工作台", icon: LayoutDashboard },
-  { href: ROUTES.PRODUCTS, label: "商品管理", icon: Package },
-  { href: ROUTES.CATEGORIES, label: "宠物分类", icon: PawPrint },
-  { href: ROUTES.ORDERS, label: "订单管理", icon: ShoppingCart },
-  { href: ROUTES.REFUNDS, label: "售后管理", icon: CreditCard },
-  { href: ROUTES.CUSTOMERS, label: "会员体系", icon: Users },
-];
+const ICON_BY_CODE: Record<string, LucideIcon> = {
+  system: Settings,
+  accounts: Users,
+  roles: KeyRound,
+  permissions: ShieldCheck,
+  users: Users,
+};
 
-const bottomNavItems = [
-  { href: ROUTES.ANALYTICS, label: "数据分析", icon: BarChart3 },
-  { href: ROUTES.SETTINGS, label: "系统设置", icon: Settings },
-];
+/** 后端菜单未包含 C 端用户入口时，前端按权限补挂（菜单仅导航，接口独立鉴权） */
+function useNavTree(): { items: MenuItem[]; isLoading: boolean } {
+  const { data: menus, isLoading } = useMenus();
+  const canReadUsers = useHasPermission(PERMISSION_CODES.USER_READ);
 
-export function Sidebar() {
-  const pathname = usePathname();
-  const router = useRouter();
-  const [pendingHref, setPendingHref] = useState<string | null>(null);
-
-  useEffect(() => {
-    [...mainNavItems, ...bottomNavItems].forEach(({ href }) => {
-      router.prefetch(href);
-    });
-  }, [router]);
-
-  useEffect(() => {
-    setPendingHref(null);
-  }, [pathname]);
-
-  useEffect(() => {
-    if (!pendingHref) {
-      return;
+  const items = useMemo(() => {
+    const tree: MenuItem[] = [...(menus ?? [])];
+    const hasUsers = tree.some(
+      (item) => item.code === "users" || item.path === ROUTES.USERS
+    );
+    if (!hasUsers && canReadUsers) {
+      tree.push({ code: "users", title: "用户", path: ROUTES.USERS, children: [] });
     }
+    return tree;
+  }, [menus, canReadUsers]);
 
-    const timeoutId = window.setTimeout(() => {
-      setPendingHref(null);
-    }, 5000);
+  return { items, isLoading };
+}
 
-    return () => window.clearTimeout(timeoutId);
-  }, [pendingHref]);
+function MenuLink({ item }: { item: MenuItem }) {
+  const pathname = usePathname();
+  const Icon = ICON_BY_CODE[item.code] ?? LayoutGrid;
+
+  if (item.children.length > 0) {
+    return (
+      <div>
+        <p className="px-3 pb-2 pt-4 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+          {item.title}
+        </p>
+        <div className="space-y-1">
+          {item.children.map((child) => (
+            <MenuLink key={child.code} item={child} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!item.path) return null;
+
+  const isActive =
+    pathname === item.path || pathname.startsWith(`${item.path}/`);
+
+  return (
+    <Link
+      className={cn(
+        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+        isActive
+          ? "bg-primary/10 text-primary-700"
+          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+      )}
+      href={item.path}
+    >
+      <Icon className={cn("h-4 w-4", isActive && "text-primary")} />
+      <span>{item.title}</span>
+    </Link>
+  );
+}
+
+/** 侧边栏：菜单树由 /api/admin/auth/menus 按权限返回（ADMIN-V1-03） */
+export function Sidebar() {
+  const { items, isLoading } = useNavTree();
 
   return (
     <aside className="hidden h-full w-64 shrink-0 border-r border-border/40 bg-background lg:flex lg:flex-col">
@@ -67,102 +99,26 @@ export function Sidebar() {
           <PawPrint className="h-5 w-5 text-primary-foreground" />
         </div>
         <div className="flex flex-col">
-          <span className="text-sm font-semibold tracking-tight">JinHan</span>
-          <span className="text-[10px] text-muted-foreground">Merchant Admin</span>
+          <span className="text-sm font-semibold tracking-tight">PetTown</span>
+          <span className="text-[10px] text-muted-foreground">管理后台</span>
         </div>
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        <div className="px-3 pb-2">
-          <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-            菜单
-          </span>
-        </div>
-        {mainNavItems.map(({ href, label, icon: Icon }) => {
-          const isActive = pathname === href || (href !== ROUTES.DASHBOARD && pathname.startsWith(href));
-          const isPending = pendingHref === href && !isActive;
-
-          return (
-            <Link
-              aria-busy={isPending}
-              key={href}
-              className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
-                isActive
-                  ? "bg-primary/10 text-primary-700"
-                  : isPending
-                    ? "bg-accent text-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
-              )}
-              href={href}
-              onClick={() => {
-                if (!isActive) {
-                  setPendingHref(href);
-                }
-              }}
-              prefetch
-            >
-              {isPending ? (
-                <LoaderCircle className="h-4 w-4 animate-spin text-primary" />
-              ) : (
-                <Icon className={cn("h-4 w-4", isActive && "text-primary")} />
-              )}
-              <span>{label}</span>
-            </Link>
-          );
-        })}
-
-        <div className="px-3 pb-2 pt-6">
-          <span className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-            工具
-          </span>
-        </div>
-        {bottomNavItems.map(({ href, label, icon: Icon }) => {
-          const isActive = pathname === href || pathname.startsWith(href);
-          const isPending = pendingHref === href && !isActive;
-
-          return (
-            <Link
-              aria-busy={isPending}
-              key={href}
-              className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
-                isActive
-                  ? "bg-primary/10 text-primary-700"
-                  : isPending
-                    ? "bg-accent text-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
-              )}
-              href={href}
-              onClick={() => {
-                if (!isActive) {
-                  setPendingHref(href);
-                }
-              }}
-              prefetch
-            >
-              {isPending ? (
-                <LoaderCircle className="h-4 w-4 animate-spin text-primary" />
-              ) : (
-                <Icon className={cn("h-4 w-4", isActive && "text-primary")} />
-              )}
-              <span>{label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-
-      <div className="border-t border-border/40 p-4">
-        <div className="rounded-xl bg-primary/5 p-4">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-xs font-semibold text-primary-700">AI 助手</span>
+        {isLoading ? (
+          <div className="space-y-2 px-2">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <Skeleton key={index} className="h-9 w-full rounded-xl" />
+            ))}
           </div>
-          <p className="mt-2 text-xs leading-5 text-muted-foreground">
-            试试用 AI 生成商品标题、类目建议和营销文案
+        ) : items.length === 0 ? (
+          <p className="px-3 py-6 text-xs leading-5 text-muted-foreground">
+            暂无可见菜单，请联系管理员为当前角色分配权限。
           </p>
-        </div>
-      </div>
+        ) : (
+          items.map((item) => <MenuLink key={item.code} item={item} />)
+        )}
+      </nav>
     </aside>
   );
 }

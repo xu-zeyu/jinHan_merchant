@@ -1,12 +1,4 @@
-export type Status = "active" | "inactive" | "draft";
-
-export interface BaseEntity {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface SelectOption {
+export type SelectOption = {
   label: string;
   value: string;
-}
+};

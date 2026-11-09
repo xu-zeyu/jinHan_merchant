@@ -20,6 +20,7 @@ export function readAuthCookieFromDocument() {
   return hasAuthCookieValue(cookieEntry?.split("=")[1]);
 }
 
+/** 同步会话 Cookie，供 middleware 做路由鉴权 */
 export function syncBrowserAuthCookie(isAuthenticated: boolean) {
   if (typeof document === "undefined") {
     return;

@@ -1,0 +1,70 @@
+schema_version: 1
+project:
+  id: "jinhan-miniapp"
+  name: "金晗小程序"
+  description: "金晗商城客户端；仓库中有首页、商品、客服、登录、地址、个人中心及寄养预约页面。"
+  status: "discovery_pending"
+
+  repository:
+    path: "/Users/xuzeyu/Documents/company/jinHan/jinHan_miniApp"
+    remote_url: "git@github.com:shenzhenCat/cat_miniApp.git"
+    default_branch: "main" # 已核实本地分支与 origin/main；远程默认分支设置尚未核实
+
+  tapd:
+    workspace_id: "待确认：当前仓库没有可核实的 TAPD 空间关联"
+    project_id: "待确认：当前仓库没有可核实的 TAPD 项目关联"
+    project_url: "待确认：当前仓库没有可核实的 TAPD 项目链接"
+
+  product:
+    target_users: ["待确认：页面显示面向商城及寄养服务的使用者，正式用户定义未见产品文档"]
+    core_scenarios: ["浏览商品与商品详情", "登录及管理收货地址", "查看客服会话并聊天", "填写寄养预约"]
+    business_goals: ["待确认：仓库未提供产品目标或指标"]
+
+  stack_profiles: ["vue_frontend"]
+  technology:
+    languages: ["TypeScript", "Vue 单文件组件", "SCSS"]
+    frameworks: ["uni-app 3", "Vue 3", "Pinia 2", "Wot Design Uni", "UnoCSS"]
+    runtime_versions:
+      node: ">=18（package.json engines）"
+      pnpm: ">=7.30（package.json engines）"
+      uni_app: "3.0.0-alpha-4010520240507001（package.json）"
+      vue: "3.4.21（package.json）"
+      vite: "5.2.8（package.json）"
+      typescript: "4.9.5（package.json）"
+    databases: ["不适用：客户端仓库无数据库；Pinia 用户状态使用 uni 本地存储持久化"]
+    build_tools: ["pnpm", "Vite", "uni CLI"]
+
+  commands:
+    install: "pnpm install"
+    build: "pnpm build:mp-weixin（微信小程序）；pnpm build:h5（H5）；pnpm build:app（App）"
+    test: "不适用：package.json 未配置自动化测试脚本；可执行 pnpm type-check 进行静态类型检查"
+    lint: "pnpm exec eslint src --ext .vue,.ts（项目配置了 ESLint；package.json 未配置 lint 脚本）"
+
+  modules:
+    source_of_truth: ".ai/project-knowledge/jinhan-miniapp/modules.md"
+    last_verified: null
+
+  ui:
+    guidelines: ".ai/project-knowledge/jinhan-miniapp/ui-guidelines.md"
+    design_source: "仓库现有页面、src/style/index.scss、src/uni.scss、pages.config.ts 和 src/static 资源" # 外部设计稿尚未核实
+    ardot_project_id: "待确认：当前仓库无 Ardot 项目 ID"
+    ardot_mcp_connection: "待确认：当前会话未核实 Ardot MCP 连接"
+    ardot_mcp_documentation: "https://docs.ardot.tencent.com/ardot-mcp/introduction.html"
+
+  skills:
+    code_analysis: []
+    backend_development: []
+    frontend_development: []
+    mobile_development: []
+    testing: []
+    tapd: []
+    wecom: []
+
+  permissions:
+    may_read_repository: true
+    may_edit_source_code_after_approval: true
+    may_run_local_tests: true
+    may_run_database_migrations: false
+    may_commit_or_push: false
+    may_deploy: false
+    may_touch_production: false

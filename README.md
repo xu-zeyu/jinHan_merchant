@@ -1,87 +1,64 @@
-# 宠物电商商家后台
+# 宠物产品管理后台（PetTown Admin）
 
-现代化 SaaS 风格宠物电商商家后台管理系统
+金晗宠物产品管理后台。范围以 TAPD `32445978` 的 **v1.0.0 需求池**为准：
+管理员认证与账号管理、角色与权限管理、C 端用户与宠物数据查看。
+接口契约来源：Apifox 项目 `9001157`（PetTown 管理后台接口，`Result<T>` 统一包络）。
 
 ## 技术栈
 
 - **框架**: Next.js 15 (App Router)
 - **语言**: TypeScript
 - **样式**: TailwindCSS + shadcn/ui
-- **状态管理**: Zustand + TanStack Query
+- **状态管理**: Zustand（会话）+ TanStack Query（服务端状态）
 - **表单**: React Hook Form + Zod
-- **动画**: Framer Motion
-- **图表**: Recharts
+
+## 功能模块（对应 TAPD 需求）
+
+| 模块 | 需求 | 说明 |
+|---|---|---|
+| 登录与验证码 | ADMIN-V1-01 / 02 | 图形验证码 + 用户名密码登录 |
+| 会话与菜单 | ADMIN-V1-03 | 当前管理员信息、权限码、按权限返回菜单 |
+| 管理员账号 | ADMIN-V1-04~08 | 分页查询、创建、编辑、启停、删除、重置密码、强制改密 |
+| 角色与权限 | ADMIN-V1-09~11 | 角色 CRUD、权限分配、权限目录查询与同步 |
+| C 端用户 | ADMIN-V1-12 / 13 | 用户分页/详情/封禁解封、宠物数据查看 |
 
 ## 项目结构
 
 ```
 src/
-├── app/              # Next.js App Router 页面
-├── features/         # 业务功能模块（Feature-First 架构）
-├── components/       # 通用组件
-├── services/         # 服务层
-├── stores/           # Zustand 状态管理
-├── hooks/            # 自定义 Hooks
-├── providers/        # Context Providers
-├── permissions/      # 权限系统
-├── constants/        # 常量配置
-├── types/            # TypeScript 类型
-└── lib/              # 工具函数
+├── app/              # (auth) 登录/改密；(main) 系统管理与用户管理
+├── features/         # auth / account / role / user（Feature-First 自闭环）
+├── components/       # ui / common / layout
+├── services/         # api-client（Result<T> 解包 + Bearer Token）
+├── providers/        # TanStack Query Provider
+├── permissions/      # 内置权限码（与后端 AdminPermissionCodes 对齐）
+├── constants/        # 路由 / 接口 / 应用配置
+├── types/            # 共享类型（ApiResult / PageResult）
+├── hooks/            # use-toast 等
+└── lib/              # cn 等工具
 ```
 
 ## 快速开始
 
-### 安装依赖
-
 ```bash
 npm install
-# or
-pnpm install
-# or
-yarn install
+cp .env.example .env.local   # 配置 API_PROXY_TARGET（默认 http://127.0.0.1:8081）
+npm run dev                  # http://localhost:3000
 ```
 
-### 配置环境变量
-
-复制 `.env.example` 到 `.env.local` 并填写配置：
-
-```bash
-cp .env.example .env.local
-```
-
-### 启动开发服务器
-
-```bash
-npm run dev
-```
-
-访问 [http://localhost:3000](http://localhost:3000)
+前端通过 Next.js rewrites 将 `/api/admin/*` 代理到后端管理服务，避免跨域。
 
 ## 开发规范
 
-详见 [AGENT.md](./AGENT.md) 和 [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)
+详见 [AGENT.md](./AGENT.md)。核心原则：
 
-### 核心原则
+1. **Feature-First 架构** — 业务模块独立自闭环
+2. **Server Components 优先** — 仅表单/交互使用 "use client"
+3. **类型安全** — 禁止 any；接口类型对齐 Apifox 契约
+4. **单一职责** — 单文件不超过 300 行；API 一请求一文件
+5. **极简设计** — 卡片化、留白、柔和阴影
 
-1. **Feature-First 架构** - 业务模块独立自闭环
-2. **Server Components 优先** - 默认使用服务端组件
-3. **类型安全** - 禁止使用 any
-4. **单一职责** - 单文件不超过 300 行
-5. **极简设计** - 参考 Shopify/Linear/Vercel 风格
+## 状态
 
-## 功能模块
-
-- ✅ 商品管理
-- ✅ 宠物分类
-- ✅ 订单管理
-- ✅ 售后管理
-- ✅ 会员体系
-- ✅ AI 商品生成
-- ✅ AI 文案生成
-- ✅ 数据分析
-- ✅ 财务系统
-- ✅ 权限系统
-
-## License
-
-MIT
+- v1.0.0 管理端 13 条需求页面与 API 对接已完成本地交付（2026-11-09）。
+- 后端服务需本地运行于 `API_PROXY_TARGET`；联调验收以 TAPD 需求验收标准为准。

@@ -13,17 +13,24 @@ import {
 
 export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
-  const isAuthenticated = hasAuthCookieValue(request.cookies.get(AUTH_COOKIE_NAME)?.value);
+  const isAuthenticated = hasAuthCookieValue(
+    request.cookies.get(AUTH_COOKIE_NAME)?.value
+  );
 
   if (!isAuthenticated && isProtectedRoute(pathname)) {
-    return NextResponse.redirect(new URL(buildLoginRedirectPath(pathname), request.url));
+    return NextResponse.redirect(
+      new URL(buildLoginRedirectPath(pathname), request.url)
+    );
   }
 
   if (isAuthenticated && (pathname === ROUTES.HOME || isAuthRoute(pathname))) {
+    // 改密页对已登录用户开放
+    if (pathname === ROUTES.CHANGE_PASSWORD) {
+      return NextResponse.next();
+    }
     const url = request.nextUrl.clone();
     url.pathname = getAuthenticatedRedirectPath(searchParams.get("redirect"));
     url.search = "";
-
     return NextResponse.redirect(url);
   }
 
@@ -31,19 +38,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/",
-    "/dashboard/:path*",
-    "/products/:path*",
-    "/categories/:path*",
-    "/orders/:path*",
-    "/refunds/:path*",
-    "/customers/:path*",
-    "/analytics/:path*",
-    "/finance/:path*",
-    "/settings/:path*",
-    "/login",
-    "/register",
-    "/forgot-password",
-  ],
+  matcher: ["/", "/system/:path*", "/users/:path*", "/login", "/change-password"],
 };

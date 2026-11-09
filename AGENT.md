@@ -4,25 +4,26 @@
 
 项目名称：
 
-宠物电商商家后台（Pet Commerce Merchant Admin）
+宠物产品管理后台（PetTown Admin）
 
 项目定位：
 
-现代化 SaaS 风格宠物电商商家后台。
+金晗宠物产品管理后台。范围以 TAPD `32445978` 的 v1.0.0 需求池为准；接口契约以 Apifox 项目 `9001157` 为准。
 
 包含：
 
-- 商品管理
-- 宠物分类
-- 订单管理
-- 售后管理
-- 会员体系
-- AI 商品生成
-- AI 文案生成
-- 数据分析
-- 商家工作台
-- 权限系统
-- 财务系统
+- 管理端登录（图形验证码、强制改密）
+- 管理员账号管理
+- 角色与权限管理
+- 权限点目录
+- C 端用户管理（封禁/解封）
+- C 端用户宠物数据查看
+
+不含（v1.0.0 移出范围）：
+
+- 电商工作台、商品、分类、订单、售后
+- 数据分析、财务
+- AI 商品/文案生成
 
 项目风格：
 
@@ -140,35 +141,22 @@ src/
   app/
 
     (auth)/
-    (dashboard)/
+    (main)/
 
   features/
 
     auth/
-    dashboard/
-    product/
-    category/
-    order/
-    refund/
-    customer/
-    ai/
-    analytics/
-    finance/
-    settings/
+    account/
+    role/
+    user/
 
   components/
 
     ui/
     common/
     layout/
-    charts/
-    business/
 
   services/
-
-  stores/
-
-  hooks/
 
   providers/
 
@@ -177,6 +165,8 @@ src/
   constants/
 
   types/
+
+  hooks/
 
   lib/
 
@@ -195,7 +185,7 @@ src/
 
 每个 feature 必须：
 
-features/product/
+features/account/
 
   api/
   components/
@@ -280,13 +270,13 @@ features/product/
 
 API 请求：
 
-features/product/api/
+features/account/api/
 
 示例：
 
-get-product-list.ts
-create-product.ts
-update-product.ts
+get-accounts.ts
+create-account.ts
+update-account.ts
 
 禁止：
 

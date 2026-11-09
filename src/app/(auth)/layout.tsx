@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
 
-import { AuthPageGuard } from "@/features/auth/components/auth-page-guard";
-
 export default function AuthLayout({
   children,
 }: Readonly<{
@@ -14,27 +12,25 @@ export default function AuthLayout({
           <div className="hidden bg-[linear-gradient(160deg,#ffefcc_0%,#fff7e6_45%,#fdfdfb_100%)] p-10 lg:flex lg:flex-col lg:justify-between">
             <div>
               <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-primary-700 shadow-sm">
-                Merchant Suite
+                PetTown Admin
               </span>
               <h1 className="mt-6 text-4xl font-semibold leading-tight text-slate-900">
-                为宠物商家打造的
+                宠物产品
                 <br />
-                轻盈运营后台
+                管理后台
               </h1>
               <p className="mt-4 max-w-md text-sm leading-7 text-slate-600">
-                覆盖商品、订单、会员、财务和 AI 运营能力，界面保持温和、清晰、低负担。
+                管理员账号与角色权限、C 端用户与宠物数据，一处清晰可控。
               </p>
             </div>
             <div className="rounded-[28px] bg-white/80 p-6 shadow-sm">
-              <p className="text-sm font-semibold text-slate-900">今日建议</p>
+              <p className="text-sm font-semibold text-slate-900">安全提示</p>
               <p className="mt-2 text-sm leading-6 text-slate-500">
-                先完成店铺基础信息、物流模板和主推商品卡片，后台就能进入可用状态。
+                首次登录请立即修改初始密码；账号停用后所有会话将立即失效。
               </p>
             </div>
           </div>
-          <div className="p-6 md:p-10">
-            <AuthPageGuard>{children}</AuthPageGuard>
-          </div>
+          <div className="p-6 md:p-10">{children}</div>
         </div>
       </div>
     </div>
